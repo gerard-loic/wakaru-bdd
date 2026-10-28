@@ -1,0 +1,672 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project name="Wakaru - v1.0.0" database="PostgreSQL" id="0ccf75e1-1fa6-4e8e-97af-70d37471ff7d" >
+	<schema name="public" >
+		<comment><![CDATA[standard public schema]]></comment>
+		<table name="composition_kanji" prior="composition_kan" >
+			<column name="composition_id" type="integer" />
+			<column name="kanji_id" type="integer" />
+			<fk name="fk_composition_kanji_compositions" to_schema="public" to_table="compositions" >
+				<fk_column name="composition_id" pk="id" />
+			</fk>
+			<fk name="fk_composition_kanji_kanjis" to_schema="public" to_table="kanjis" >
+				<fk_column name="kanji_id" pk="id" />
+			</fk>
+		</table>
+		<table name="composition_types" prior="composition_ty" >
+			<column name="id" type="serial" mandatory="y" />
+			<column name="created_at" type="timestamp" mandatory="y" >
+				<defo><![CDATA[Now()]]></defo>
+			</column>
+			<column name="updated_at" type="timestamp" mandatory="y" >
+				<defo><![CDATA[Now()]]></defo>
+			</column>
+			<column name="deleted_at" type="timestamp" />
+			<column name="name" type="varchar" mandatory="y" />
+			<column name="uid" type="varchar" mandatory="y" />
+			<index name="pk_composition_types" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<index name="unq_composition_types" unique="UNIQUE_KEY" >
+				<column name="uid" />
+			</index>
+		</table>
+		<table name="compositions" prior="composition" >
+			<column name="id" type="serial" mandatory="y" />
+			<column name="created_at" type="timestamp" >
+				<defo><![CDATA[Now()]]></defo>
+			</column>
+			<column name="updated_at" type="timestamp" >
+				<defo><![CDATA[Now()]]></defo>
+			</column>
+			<column name="deleted_at" type="timestamp" />
+			<column name="text" type="varchar" />
+			<column name="reading" type="varchar" />
+			<column name="word_id" type="integer" />
+			<column name="composition_type_id" type="integer" />
+			<column name="is_rendaku" type="boolean" mandatory="y" >
+				<defo><![CDATA[FALSE]]></defo>
+			</column>
+			<index name="pk_composition" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<fk name="fk_composition_words" to_schema="public" to_table="words" >
+				<fk_column name="word_id" pk="id" />
+			</fk>
+			<fk name="fk_compositions_composition_types" to_schema="public" to_table="composition_types" >
+				<fk_column name="composition_type_id" pk="id" />
+			</fk>
+		</table>
+		<table name="exercise_categories" prior="grammar_categories_0" >
+			<column name="id" type="serial" mandatory="y" />
+			<column name="created_at" type="timestamp" mandatory="y" >
+				<defo><![CDATA[now()]]></defo>
+			</column>
+			<column name="updated_at" type="timestamp" mandatory="y" >
+				<defo><![CDATA[now()]]></defo>
+			</column>
+			<column name="deleted_at" type="timestamp" />
+			<column name="name" type="varchar" mandatory="y" />
+			<column name="uid" type="varchar" mandatory="y" />
+			<index name="pk_categories_0" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<index name="unq_categories_0" unique="UNIQUE_KEY" >
+				<column name="uid" />
+			</index>
+		</table>
+		<table name="exercise_items" prior="exercise_it" >
+			<column name="id" type="serial" mandatory="y" />
+			<column name="created_at" type="timestamp" >
+				<defo><![CDATA[now()]]></defo>
+			</column>
+			<column name="updated_at" type="timestamp" >
+				<defo><![CDATA[now()]]></defo>
+			</column>
+			<column name="deleted_at" type="timestamp" />
+			<column name="exercise_id" type="integer" mandatory="y" />
+			<column name="prompt" prior="sentence" type="varchar" mandatory="y" />
+			<column name="translation" type="varchar" />
+			<column name="blanks" type="varchar" />
+			<column name="explanation" type="varchar" />
+			<index name="pk_exercise_items" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<fk name="fk_exercise_items_exercise" to_schema="public" to_table="exercises" >
+				<fk_column name="exercise_id" pk="id" />
+			</fk>
+		</table>
+		<table name="exercise_types" prior="exercise_categories_0" >
+			<column name="id" type="serial" mandatory="y" />
+			<column name="created_at" type="timestamp" mandatory="y" >
+				<defo><![CDATA[now()]]></defo>
+			</column>
+			<column name="updated_at" type="timestamp" mandatory="y" >
+				<defo><![CDATA[now()]]></defo>
+			</column>
+			<column name="deleted_at" type="timestamp" />
+			<column name="name" type="varchar" mandatory="y" />
+			<column name="uid" type="varchar" mandatory="y" />
+			<index name="pk_categories_1" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<index name="unq_categories_1" unique="UNIQUE_KEY" >
+				<column name="uid" />
+			</index>
+		</table>
+		<table name="exercises" prior="exercise" >
+			<column name="id" type="serial" mandatory="y" />
+			<column name="created_at" type="timestamp" >
+				<defo><![CDATA[now()]]></defo>
+			</column>
+			<column name="updated_at" type="timestamp" >
+				<defo><![CDATA[now()]]></defo>
+			</column>
+			<column name="deleted_at" type="timestamp" />
+			<column name="exercise_category_id" prior="category_id" type="integer" mandatory="y" />
+			<column name="exercise_type_id" type="integer" />
+			<column name="level_id" type="integer" mandatory="y" />
+			<column name="theme_id" type="integer" mandatory="y" />
+			<column name="name" type="varchar" mandatory="y" />
+			<column name="instructions" prior="content" type="text" />
+			<column name="choices" type="varchar" />
+			<index name="pk_exercise" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<fk name="fk_exercise_levels" to_schema="public" to_table="levels" >
+				<fk_column name="level_id" pk="id" />
+			</fk>
+			<fk name="fk_exercise_themes" to_schema="public" to_table="themes" >
+				<fk_column name="theme_id" pk="id" />
+			</fk>
+			<fk name="fk_exercises_exercise_categories" to_schema="public" to_table="exercise_categories" >
+				<fk_column name="exercise_category_id" pk="id" />
+			</fk>
+			<fk name="fk_exercises_exercise_types" to_schema="public" to_table="exercise_types" >
+				<fk_column name="exercise_type_id" pk="id" />
+			</fk>
+		</table>
+		<table name="grammar_categories" prior="categories" >
+			<column name="id" type="serial" mandatory="y" />
+			<column name="created_at" type="timestamp" mandatory="y" >
+				<defo><![CDATA[now()]]></defo>
+			</column>
+			<column name="updated_at" type="timestamp" mandatory="y" >
+				<defo><![CDATA[now()]]></defo>
+			</column>
+			<column name="deleted_at" type="timestamp" />
+			<column name="name" type="varchar" mandatory="y" />
+			<column name="uid" type="varchar" mandatory="y" />
+			<index name="pk_categories" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<index name="unq_categories" unique="UNIQUE_KEY" >
+				<column name="uid" />
+			</index>
+		</table>
+		<table name="grammar_rules" prior="grammar_rule" >
+			<column name="id" type="serial" mandatory="y" />
+			<column name="created_at" type="timestamp" mandatory="y" >
+				<defo><![CDATA[now()]]></defo>
+			</column>
+			<column name="updated_at" type="timestamp" mandatory="y" >
+				<defo><![CDATA[now()]]></defo>
+			</column>
+			<column name="deleted_at" type="timestamp" />
+			<column name="uid" type="varchar" mandatory="y" />
+			<column name="name" prior="title" type="varchar" mandatory="y" />
+			<column name="description" type="text" />
+			<column name="grammar_category_id" prior="category_id" type="integer" mandatory="y" />
+			<column name="theme_id" type="integer" mandatory="y" />
+			<column name="level_id" type="integer" mandatory="y" />
+			<index name="pk_grammar_rules" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<index name="unq_grammar_rules" unique="UNIQUE_KEY" >
+				<column name="uid" />
+			</index>
+			<fk name="fk_grammar_rules_categories" to_schema="public" to_table="grammar_categories" >
+				<fk_column name="grammar_category_id" pk="id" />
+			</fk>
+			<fk name="fk_grammar_rules_themes" to_schema="public" to_table="themes" >
+				<fk_column name="theme_id" pk="id" />
+			</fk>
+			<fk name="fk_grammar_rules_levels" to_schema="public" to_table="levels" >
+				<fk_column name="level_id" pk="id" />
+			</fk>
+		</table>
+		<table name="hiraganas" prior="hiraga" >
+			<column name="id" type="serial" mandatory="y" />
+			<column name="created_at" type="timestamp" mandatory="y" >
+				<defo><![CDATA[now()]]></defo>
+			</column>
+			<column name="updated_at" type="timestamp" mandatory="y" >
+				<defo><![CDATA[now()]]></defo>
+			</column>
+			<column name="deleted_at" type="timestamp" />
+			<column name="hiragana" type="varchar" mandatory="y" />
+			<column name="pronunciation" type="varchar" mandatory="y" />
+			<column name="order" type="integer" />
+			<column name="is_derivated" type="boolean" >
+				<defo><![CDATA[FALSE]]></defo>
+			</column>
+			<column name="type" type="varchar" length="50" />
+			<index name="pk_hiraganas" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+		</table>
+		<table name="kanjis" prior="kenjis" >
+			<column name="id" type="serial" mandatory="y" />
+			<column name="created_at" type="timestamp" mandatory="y" >
+				<defo><![CDATA[now()]]></defo>
+			</column>
+			<column name="updated_at" type="timestamp" mandatory="y" >
+				<defo><![CDATA[now()]]></defo>
+			</column>
+			<column name="deleted_at" type="timestamp" />
+			<column name="char" prior="kanji" type="varchar" mandatory="y" />
+			<column name="readings" prior="on_reading" type="varchar" />
+			<column name="description" type="varchar" />
+			<column name="level_id" type="integer" mandatory="y" />
+			<column name="translations" type="varchar" />
+			<column name="strokes" type="integer" />
+			<column name="radical" type="varchar" />
+			<column name="grade" type="varchar" />
+			<column name="unicode" type="varchar" />
+			<index name="pk_kenjis" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<index name="unq_kanjis" unique="UNIQUE_KEY" >
+				<column name="unicode" />
+			</index>
+			<fk name="fk_kanjis_levels" to_schema="public" to_table="levels" >
+				<fk_column name="level_id" pk="id" />
+			</fk>
+		</table>
+		<table name="katakanas" prior="hiraganas_1" >
+			<column name="id" type="serial" mandatory="y" />
+			<column name="created_at" type="timestamp" mandatory="y" >
+				<defo><![CDATA[now()]]></defo>
+			</column>
+			<column name="updated_at" type="timestamp" mandatory="y" >
+				<defo><![CDATA[now()]]></defo>
+			</column>
+			<column name="deleted_at" type="timestamp" />
+			<column name="katakana" prior="hiragana" type="varchar" mandatory="y" />
+			<column name="pronunciation" type="varchar" mandatory="y" />
+			<column name="order" type="integer" />
+			<column name="is_derivated" type="boolean" />
+			<column name="type" type="varchar" length="50" />
+			<index name="pk_hiraganas_1" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+		</table>
+		<table name="levels" prior="le" >
+			<column name="id" type="serial" mandatory="y" />
+			<column name="created_at" type="timestamp" mandatory="y" >
+				<defo><![CDATA[now()]]></defo>
+			</column>
+			<column name="updated_at" type="timestamp" mandatory="y" >
+				<defo><![CDATA[now()]]></defo>
+			</column>
+			<column name="deleted_at" type="timestamp" />
+			<column name="uid" type="varchar" mandatory="y" />
+			<column name="name" type="varchar" mandatory="y" />
+			<column name="is_default" prior="id_default" type="boolean" mandatory="y" >
+				<defo><![CDATA[false]]></defo>
+			</column>
+			<index name="pk_levels" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<index name="unq_levels" unique="UNIQUE_KEY" >
+				<column name="uid" />
+			</index>
+		</table>
+		<table name="partofspeeches" prior="wordpos" >
+			<column name="id" type="serial" mandatory="y" />
+			<column name="created_at" type="timestamp" >
+				<defo><![CDATA[Now()]]></defo>
+			</column>
+			<column name="updated_at" type="timestamp" >
+				<defo><![CDATA[Now()]]></defo>
+			</column>
+			<column name="deleted_at" type="timestamp" />
+			<column name="uid" type="varchar" mandatory="y" />
+			<column name="name" type="varchar" mandatory="y" />
+			<index name="pk_wordpos" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<index name="unq_wordpos" unique="UNIQUE_KEY" >
+				<column name="uid" />
+			</index>
+		</table>
+		<table name="permissions" prior="permissi" >
+			<column name="id" type="serial" mandatory="y" />
+			<column name="created_at" type="timestamp" mandatory="y" >
+				<defo><![CDATA[now()]]></defo>
+			</column>
+			<column name="updated_at" type="timestamp" mandatory="y" >
+				<defo><![CDATA[now()]]></defo>
+			</column>
+			<column name="deleted_at" type="timestamp" />
+			<column name="uid" type="varchar" mandatory="y" />
+			<column name="route" type="varchar" mandatory="y" />
+			<column name="method" type="varchar" mandatory="y" />
+			<index name="pk_permissions" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<index name="unq_permissions" unique="UNIQUE_KEY" >
+				<column name="uid" />
+			</index>
+		</table>
+		<table name="role_permission" prior="role_permissi" >
+			<column name="role_id" type="integer" mandatory="y" />
+			<column name="permission_id" type="integer" mandatory="y" />
+			<fk name="fk_role_permission_roles" to_schema="public" to_table="roles" >
+				<fk_column name="role_id" pk="id" />
+			</fk>
+			<fk name="fk_role_permission_permissions" to_schema="public" to_table="permissions" >
+				<fk_column name="permission_id" pk="id" />
+			</fk>
+		</table>
+		<table name="roles" prior="rol" >
+			<column name="id" type="serial" mandatory="y" />
+			<column name="created_at" type="timestamp" mandatory="y" >
+				<defo><![CDATA[now()]]></defo>
+			</column>
+			<column name="updated_at" type="timestamp" mandatory="y" >
+				<defo><![CDATA[now()]]></defo>
+			</column>
+			<column name="deleted_at" type="timestamp" />
+			<column name="name" type="varchar" mandatory="y" />
+			<column name="uid" type="varchar" mandatory="y" />
+			<index name="pk_roles" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<index name="unq_roles" unique="UNIQUE_INDEX" >
+				<column name="uid" />
+			</index>
+		</table>
+		<table name="sendmails" prior="sendmai" >
+			<column name="id" type="serial" mandatory="y" />
+			<column name="created_at" type="timestamp" >
+				<defo><![CDATA[now()]]></defo>
+			</column>
+			<column name="updated_at" type="timestamp" >
+				<defo><![CDATA[now()]]></defo>
+			</column>
+			<column name="deleted_at" type="timestamp" />
+			<column name="from" type="varchar" mandatory="y" />
+			<column name="to" type="varchar" mandatory="y" />
+			<column name="subject" type="varchar" mandatory="y" />
+			<column name="content" type="text" mandatory="y" />
+			<index name="pk_sendmails" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+		</table>
+		<table name="sentence_token_roles" prior="sentence_token_rol" >
+			<column name="id" type="serial" mandatory="y" />
+			<column name="created_at" type="timestamp" mandatory="y" >
+				<defo><![CDATA[Now()]]></defo>
+			</column>
+			<column name="updated_at" type="timestamp" mandatory="y" >
+				<defo><![CDATA[Now()]]></defo>
+			</column>
+			<column name="deleted_at" type="timestamp" />
+			<column name="uid" type="varchar" mandatory="y" />
+			<column name="name" type="varchar" mandatory="y" />
+			<index name="pk_sentence_token_roles" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<index name="unq_sentence_token_roles" unique="UNIQUE_KEY" >
+				<column name="uid" />
+			</index>
+		</table>
+		<table name="sentence_tokens" prior="sentence_word" >
+			<column name="id" type="serial" mandatory="y" />
+			<column name="sentence_id" type="integer" mandatory="y" />
+			<column name="created_at" type="timestamp" >
+				<defo><![CDATA[Now()]]></defo>
+			</column>
+			<column name="updated_at" type="timestamp" >
+				<defo><![CDATA[Now()]]></defo>
+			</column>
+			<column name="deleted_at" type="timestamp" />
+			<column name="text" type="varchar" />
+			<column name="reading" type="varchar" />
+			<column name="lemma" type="varchar" />
+			<column name="word_id" type="integer" />
+			<column name="sentence_token_role_id" type="integer" />
+			<column name="word_uid" prior="token_uid" type="varchar" />
+			<index name="pk_sentence_word" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<fk name="fk_sentence_word_sentences" to_schema="public" to_table="sentences" >
+				<fk_column name="sentence_id" pk="id" />
+			</fk>
+			<fk name="fk_sentence_tokens_words" to_schema="public" to_table="words" >
+				<fk_column name="word_id" pk="id" />
+			</fk>
+			<fk name="fk_sentence_tokens_sentence_token_roles" to_schema="public" to_table="sentence_token_roles" >
+				<fk_column name="sentence_token_role_id" pk="id" />
+			</fk>
+		</table>
+		<table name="sentences" prior="sentances" >
+			<column name="id" type="serial" mandatory="y" />
+			<column name="created_at" type="timestamp" mandatory="y" >
+				<defo><![CDATA[now()]]></defo>
+			</column>
+			<column name="updated_at" type="timestamp" mandatory="y" >
+				<defo><![CDATA[now()]]></defo>
+			</column>
+			<column name="deleted_at" type="timestamp" />
+			<column name="theme_id" type="integer" mandatory="y" />
+			<column name="level_id" type="integer" mandatory="y" />
+			<column name="text" type="varchar" />
+			<column name="translation" type="varchar" mandatory="y" />
+			<index name="pk_sentences" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<fk name="fk_sentences_themes" to_schema="public" to_table="themes" >
+				<fk_column name="theme_id" pk="id" />
+			</fk>
+			<fk name="fk_sentences_levels" to_schema="public" to_table="levels" >
+				<fk_column name="level_id" pk="id" />
+			</fk>
+		</table>
+		<table name="theme_kanji" spec="" >
+			<column name="theme_id" type="integer" mandatory="y" />
+			<column name="kanji_id" type="integer" mandatory="y" />
+			<fk name="fk_theme_kanji_themes" to_schema="public" to_table="themes" >
+				<fk_column name="theme_id" pk="id" />
+			</fk>
+			<fk name="fk_theme_kanji_kanjis" to_schema="public" to_table="kanjis" >
+				<fk_column name="kanji_id" pk="id" />
+			</fk>
+		</table>
+		<table name="theme_words" prior="theme_word" spec="" >
+			<column name="id" type="serial" mandatory="y" />
+			<column name="created_at" type="timestamp" mandatory="y" >
+				<defo><![CDATA[Now()]]></defo>
+			</column>
+			<column name="updated_at" type="timestamp" mandatory="y" >
+				<defo><![CDATA[Now()]]></defo>
+			</column>
+			<column name="deleted_at" type="timestamp" />
+			<column name="theme_id" type="integer" mandatory="y" />
+			<column name="word_id" type="integer" mandatory="y" />
+			<column name="role" type="varchar" length="50" />
+			<index name="pk_theme_word" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<fk name="fk_theme_word_themes" to_schema="public" to_table="themes" >
+				<fk_column name="theme_id" pk="id" />
+			</fk>
+			<fk name="fk_theme_word_words" to_schema="public" to_table="words" >
+				<fk_column name="word_id" pk="id" />
+			</fk>
+		</table>
+		<table name="themes" prior="theme" >
+			<column name="id" type="serial" mandatory="y" />
+			<column name="created_at" type="timestamp" mandatory="y" >
+				<defo><![CDATA[now()]]></defo>
+			</column>
+			<column name="updated_at" type="timestamp" mandatory="y" >
+				<defo><![CDATA[now()]]></defo>
+			</column>
+			<column name="deleted_at" type="timestamp" />
+			<column name="name" type="varchar" />
+			<column name="description" type="text" />
+			<index name="pk_themes" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+		</table>
+		<table name="user_knowledges" prior="user_words" >
+			<column name="id" type="serial" mandatory="y" />
+			<column name="created_at" type="timestamp" mandatory="y" >
+				<defo><![CDATA[now()]]></defo>
+			</column>
+			<column name="updated_at" type="timestamp" mandatory="y" >
+				<defo><![CDATA[now()]]></defo>
+			</column>
+			<column name="deleted_at" type="timestamp" />
+			<column name="is_new" type="boolean" mandatory="y" >
+				<defo><![CDATA[true]]></defo>
+			</column>
+			<column name="mistakes" type="integer" mandatory="y" >
+				<defo><![CDATA[0]]></defo>
+			</column>
+			<column name="corrects" type="integer" mandatory="y" >
+				<defo><![CDATA[0]]></defo>
+			</column>
+			<column name="user_id" type="integer" mandatory="y" />
+			<column name="entity_name" type="varchar" mandatory="y" />
+			<column name="entity_id" type="integer" mandatory="y" />
+			<index name="pk_user_words" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<fk name="fk_user_knowledges_users" to_schema="public" to_table="users" >
+				<fk_column name="user_id" pk="id" />
+			</fk>
+		</table>
+		<table name="user_role" prior="user_ro" >
+			<column name="role_id" type="integer" mandatory="y" />
+			<column name="user_id" type="integer" mandatory="y" />
+			<fk name="fk_user_role_roles" to_schema="public" to_table="roles" >
+				<fk_column name="role_id" pk="id" />
+			</fk>
+			<fk name="fk_user_role_users" to_schema="public" to_table="users" >
+				<fk_column name="user_id" pk="id" />
+			</fk>
+		</table>
+		<table name="user_tokens" prior="hiraganas_0" >
+			<column name="id" type="serial" mandatory="y" />
+			<column name="created_at" type="timestamp" mandatory="y" >
+				<defo><![CDATA[now()]]></defo>
+			</column>
+			<column name="updated_at" type="timestamp" mandatory="y" >
+				<defo><![CDATA[now()]]></defo>
+			</column>
+			<column name="deleted_at" type="timestamp" />
+			<column name="expires_at" type="timestamp" mandatory="y" />
+			<column name="token" type="varchar" mandatory="y" />
+			<column name="user_id" type="integer" mandatory="y" />
+			<index name="pk_hiraganas_0" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<fk name="fk_user_tokens_users" to_schema="public" to_table="users" >
+				<fk_column name="user_id" pk="id" />
+			</fk>
+		</table>
+		<table name="users" prior="us" >
+			<column name="id" type="serial" mandatory="y" />
+			<column name="created_at" type="timestamp" mandatory="y" >
+				<defo><![CDATA[now()]]></defo>
+			</column>
+			<column name="updated_at" type="timestamp" mandatory="y" >
+				<defo><![CDATA[now()]]></defo>
+			</column>
+			<column name="deleted_at" type="timestamp" />
+			<column name="email" type="varchar" mandatory="y" />
+			<column name="first_name" type="varchar" mandatory="y" />
+			<column name="last_name" type="varchar" mandatory="y" />
+			<column name="password" type="varchar" />
+			<column name="level_id" type="integer" mandatory="y" />
+			<column name="initial_token" type="varchar" />
+			<index name="pk_users" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<index name="unq_users" unique="UNIQUE_KEY" >
+				<column name="email" />
+			</index>
+			<fk name="fk_users_levels" to_schema="public" to_table="levels" >
+				<fk_column name="level_id" pk="id" />
+			</fk>
+		</table>
+		<table name="words" prior="wo" >
+			<column name="id" type="serial" mandatory="y" />
+			<column name="created_at" type="timestamp" mandatory="y" >
+				<defo><![CDATA[now()]]></defo>
+			</column>
+			<column name="udapted_at" type="timestamp" mandatory="y" >
+				<defo><![CDATA[now()]]></defo>
+			</column>
+			<column name="deleted_at" type="timestamp" />
+			<column name="uid" type="varchar" mandatory="y" />
+			<column name="writing" type="varchar" />
+			<column name="reading" type="varchar" />
+			<column name="partofspeech_id" prior="wordpos_id" type="integer" />
+			<column name="translations" type="varchar" />
+			<column name="description" type="text" />
+			<column name="examples" type="varchar" />
+			<column name="level_id" type="integer" mandatory="y" />
+			<index name="pk_words" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<index name="unq_words" unique="UNIQUE_KEY" >
+				<column name="uid" />
+			</index>
+			<fk name="fk_words_levels_0" to_schema="public" to_table="levels" >
+				<fk_column name="level_id" pk="id" />
+			</fk>
+			<fk name="fk_words_wordpos" to_schema="public" to_table="partofspeeches" >
+				<fk_column name="partofspeech_id" pk="id" />
+			</fk>
+		</table>
+	</schema>
+	<diagram_group name="Default" id="1b191eb8-cf53-4caa-acd3-9af188f6279f" >
+		<diagram name="Wakaru - 1.0.0" id="2ace955a-5091-43c7-8a21-02503d520c49" joined_routing="y" show_column_type="y" show_relation="columns" >
+			<entity schema="public" name="composition_kanji" color="C1D8EE" x="2280" y="703" />
+			<entity schema="public" name="composition_types" color="C1D8EE" x="2546" y="665" />
+			<entity schema="public" name="compositions" color="C1D8EE" x="1995" y="665" />
+			<entity schema="public" name="exercise_categories" color="3986C1" x="1577" y="950" />
+			<entity schema="public" name="exercise_items" color="C4E0F9" x="855" y="646" />
+			<entity schema="public" name="exercise_types" color="3986C1" x="1368" y="950" />
+			<entity schema="public" name="exercises" color="C4E0F9" x="1539" y="646" />
+			<entity schema="public" name="grammar_categories" color="C4E0F9" x="836" y="988" />
+			<entity schema="public" name="grammar_rules" color="C4E0F9" x="1045" y="988" />
+			<entity schema="public" name="hiraganas" color="BED3F4" x="1653" y="1406" />
+			<entity schema="public" name="kanjis" color="BEBEF4" x="1254" y="1691" />
+			<entity schema="public" name="katakanas" color="BED3F4" x="1881" y="1406" />
+			<entity schema="public" name="levels" color="C7F4BE" x="2717" y="1406" />
+			<entity schema="public" name="partofspeeches" color="C1D8EE" x="2565" y="399" />
+			<entity schema="public" name="permissions" color="F4BEBE" x="361" y="1406" />
+			<entity schema="public" name="role_permission" color="F4BEBE" x="57" y="1710" />
+			<entity schema="public" name="roles" color="F4BEBE" x="361" y="1710" />
+			<entity schema="public" name="sendmails" color="C1D8EE" x="1995" y="1007" />
+			<entity schema="public" name="sentence_token_roles" color="C1D8EE" x="1957" y="133" />
+			<entity schema="public" name="sentence_tokens" color="F4DDBE" x="2242" y="95" />
+			<entity schema="public" name="sentences" color="F4DDBE" x="2565" y="133" />
+			<entity schema="public" name="theme_kanji" color="3986C1" x="1292" y="1482" />
+			<entity schema="public" name="theme_words" color="3986C1" x="1976" y="361" />
+			<entity schema="public" name="themes" color="F4DDBE" x="2337" y="1007" />
+			<entity schema="public" name="user_knowledges" color="C7F4BE" x="2337" y="1406" />
+			<entity schema="public" name="user_role" color="F4BEBE" x="684" y="1406" />
+			<entity schema="public" name="user_tokens" color="F4BEBE" x="57" y="1406" />
+			<entity schema="public" name="users" color="F4BEBE" x="684" y="1710" />
+			<entity schema="public" name="words" color="F4DDBE" x="2261" y="361" />
+			<group name="Logs" color="C4E0F9" >
+				<entity schema="public" name="sendmails" />
+			</group>
+			<group name="Gestion des thèmes" color="FFCC80" >
+				<entity schema="public" name="themes" />
+			</group>
+			<group name="Gestion de l&#039;évolution de l&#039;apprentissage" color="669966" >
+				<entity schema="public" name="levels" />
+				<entity schema="public" name="user_knowledges" />
+			</group>
+			<group name="Apprentissage des caractères" color="334DB3" >
+				<entity schema="public" name="hiraganas" />
+				<entity schema="public" name="kanjis" />
+				<entity schema="public" name="katakanas" />
+				<entity schema="public" name="theme_kanji" />
+			</group>
+			<group name="Apprentissage de la grammaire" color="C4E0F9" >
+				<entity schema="public" name="exercise_categories" />
+				<entity schema="public" name="exercise_items" />
+				<entity schema="public" name="exercise_types" />
+				<entity schema="public" name="exercises" />
+				<entity schema="public" name="grammar_categories" />
+				<entity schema="public" name="grammar_rules" />
+			</group>
+			<group name="Apprentissage du vocabulaire" color="B34D1A" >
+				<entity schema="public" name="composition_kanji" />
+				<entity schema="public" name="composition_types" />
+				<entity schema="public" name="compositions" />
+				<entity schema="public" name="partofspeeches" />
+				<entity schema="public" name="sentence_token_roles" />
+				<entity schema="public" name="sentence_tokens" />
+				<entity schema="public" name="sentences" />
+				<entity schema="public" name="theme_words" />
+				<entity schema="public" name="words" />
+			</group>
+			<group name="Gestion d&#039;utilisateurs et droits" color="800000" >
+				<entity schema="public" name="permissions" />
+				<entity schema="public" name="role_permission" />
+				<entity schema="public" name="roles" />
+				<entity schema="public" name="user_role" />
+				<entity schema="public" name="user_tokens" />
+				<entity schema="public" name="users" />
+			</group>
+		</diagram>
+	</diagram_group>
+</project>
